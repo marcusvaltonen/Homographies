@@ -9,8 +9,12 @@ __pycache__/
 *$py.class
 
 # C extensions
+*.o
 *.so
 *.so*
+
+# Matlab
+*.mex*
 
 # Distribution / packaging
 .Python

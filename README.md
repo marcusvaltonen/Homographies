@@ -15,29 +15,32 @@ The solver was generated using the automatic generator proposed by
 Larsson et al. "Efficient Solvers for Minimal Problems by Syzygy-based
 Reduction" (CVPR 2017)
 
-The input to the solver is the basis for the null space of the corresponding
-2.5 DLT system reshaped as a 36-vector, and the output is the three
-coefficients.
-
 ## DEPENDENCIES
-The implementation uses Eigen, which is a C++ template library for linear
-algebra: matrices, vectors, numerical solvers, and related algorithms.
+The implementation uses Eigen 3 (older versions are not compatible), which is
+a C++ template library for linear algebra: matrices, vectors,
+numerical solvers, and related algorithms.
 
 Installation for Ubuntu/Debian:
 
     $ apt-get install libeigen3-dev
 
+Tested on version 3.3.3.
+
 ## Using the solver in MATLAB
 It is possible to MEX-compile the solver and use it in MATLAB. The
-following line
+following line in the `c++` subdirectory
 
-    mex('-I/path/to/eigen_dir', 'c++/solver_homography_planar.cpp')
+    mex('-I/path/to/eigen_dir', '-I.', 'get_homography_25pt.cpp', 'solver_homography_planar.cpp')
 
 where `/path/to/eigen_dir` is your local path, e.g. `/usr/local/include/eigen3`.
 
-For MATLAB users an additional function is available that accepts point
-correspondences and returns the putative real homographies. It has the
-convenient name `solver_homography_planar_complete.m`
+The expected input is two 3x3 matrices (double) containing the point correspondences.
+The output is a 3x3N matrix where N is the number of putative real homographies, i.e.
+the homography matrices Hi are stored as [ H1 H2 ... HN ]. The homographies can e.g. be
+stored in a cell object using the following approach
+
+    H = get_homography_25pt(x1, x2);
+    H_cell = mat2cell(H, 3, 3*ones(1,size(H2,2)/3));
 
 Tested on Matlab R2017b, Linux (64-bit).
 
@@ -51,7 +54,7 @@ issue
 
     $ python setup.py build_ext
 
-Similar to the MATLAB function described above there is a function
-for computing putative homographies from point correspondences directly,
-and it is available as `solver_homography_planar_complete.py`. All tests have
-been done using Python 3.5.3.
+Expected input is the same as in the MATLAB function described above.
+Be careful with the order, as Fortran order is used. To avoid this, and use
+contiguous (C order), an example wrapper is found in the `python` subdirectory,
+`test_get_homography_25pt.py`. All tests have been done using Python 3.5.3.

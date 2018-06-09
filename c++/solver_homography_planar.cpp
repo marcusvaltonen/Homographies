@@ -1,10 +1,7 @@
-#include <Eigen/Dense>
-
-#ifdef MATLAB_MEX_FILE /* This macro is defined automatically when using MATLAB */
-#include "mex.h"
-#endif
+#include "solver_homography_planar.h"
 
 using namespace Eigen;
+
 
 MatrixXcd solver_homography_planar(const VectorXd& data)
 {
@@ -475,44 +472,4 @@ sols.row(0) = V.row(1);
 sols.row(1) = V.row(12);
 sols.row(2) = D.transpose();
 return sols;
-}
-
-// ----------------
-// MATLAB interface
-// ----------------
-#ifdef MATLAB_MEX_FILE
-void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
-{
-if (nrhs != 1) {
-    mexErrMsgIdAndTxt("solver_homography_planar:nrhs", "One input required.");
-}
-if (nlhs != 1) {
-    mexErrMsgIdAndTxt("solver_homography_planar:nlhs", "One output required.");
-}
-if (!mxIsDouble(prhs[0]) || mxIsComplex(prhs[0])) {
-    mexErrMsgIdAndTxt("solver_homography_planar:notDouble", "Input data must be type double.");
-}
-if(mxGetNumberOfElements(prhs[0]) != 36) {
-    mexErrMsgIdAndTxt("solver_homography_planar:incorrectSize", "Input size must be 36.");
-}
-const VectorXd data = Map<const VectorXd>(mxGetPr(prhs[0]),36);
-MatrixXcd sols = solver_homography_planar(data);
-plhs[0] = mxCreateDoubleMatrix(sols.rows(),sols.cols(),mxCOMPLEX);
-double* zr = mxGetPr(plhs[0]);
-double* zi = mxGetPi(plhs[0]);
-for (Index i = 0; i < sols.size(); i++) {
-    zr[i] = sols(i).real();
-    zi[i] = sols(i).imag();
-}
-}
-#endif
-
-// ----------------
-// Python interface
-// ----------------
-// Wrap Python (Eigency/Cython does not handle arbitrary matrices)
-VectorXcd minimal(const VectorXd &data) {
-    MatrixXcd sols = solver_homography_planar(data);
-    VectorXcd out(Map<VectorXcd>(sols.data(), sols.cols()*sols.rows()));
-    return out;
 }

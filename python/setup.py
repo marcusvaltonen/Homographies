@@ -4,15 +4,16 @@ from Cython.Build import cythonize
 
 import eigency
 
+sourcefiles = ['get_homography_25pt.pyx', '../c++/solver_homography_planar.cpp']
 extensions = [
-    Extension("solver_homography_planar.solver_homography_planar", ["solver_homography_planar.pyx"],
+    Extension("get_homograpy_25pt.get_homography_25pt", sourcefiles,
         include_dirs = [".", "../c++"] + eigency.get_includes()
     ),
 ]
 
 dist = setup(
-    name = "solver_homography_planar",
+    name = "get_homography_25pt",
     version = "0.1",
     ext_modules = cythonize(extensions),
-    packages = ["solver_homography_planar"]
+    packages = ["get_homography_25pt"]
 )
