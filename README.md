@@ -40,7 +40,7 @@ the homography matrices Hi are stored as [ H1 H2 ... HN ]. The homographies can 
 stored in a cell object using the following approach
 
     H = get_homography_25pt(x1, x2);
-    H_cell = mat2cell(H, 3, 3*ones(1,size(H2,2)/3));
+    H_cell = mat2cell(H, 3, 3 * ones(1, size(H, 2) / 3));
 
 Tested on Matlab R2017b, Linux (64-bit).
 
